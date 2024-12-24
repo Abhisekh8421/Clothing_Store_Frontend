@@ -50,6 +50,13 @@ const ShopContextProvider = ({ children }) => {
     return totalcount;
   };
 
+  //update cart quantity function
+  const updateQuantity = async (itemId, size, quantity) => {
+    let cartData = structuredClone(cartitems);
+    cartData[itemId][size] = quantity;
+    setcartitems(cartData);
+  };
+
   const value = {
     products,
     currency,
@@ -61,6 +68,7 @@ const ShopContextProvider = ({ children }) => {
     addToCart,
     cartitems,
     getcartCount,
+    updateQuantity,
   };
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
 };
