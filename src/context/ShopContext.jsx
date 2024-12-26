@@ -77,6 +77,8 @@ const ShopContextProvider = ({ children }) => {
     return totalAmount;
   };
 
+  
+
   const value = {
     products,
     currency,
