@@ -28,7 +28,7 @@ const About = () => {
           <p>
             Our mission is to redefine your shopping experience by offering
             high-quality, stylish, and affordable clothing that fits every
-            occasion
+            occasion.
           </p>
         </div>
       </div>
