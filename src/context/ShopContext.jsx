@@ -1,17 +1,19 @@
-import { createContext, useState } from "react";
-import { products } from "../assets/frontend_assets/assets";
+import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const ShopContext = createContext();
 
 const ShopContextProvider = ({ children }) => {
   const currency = "₹";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const delivery_fee = 40;
   const [search, setSearch] = useState("");
   const [showsearch, setShowsearch] = useState(false);
-
+  const [products, setProducts] = useState([]);
   const [cartitems, setcartitems] = useState({});
+  const [token, setToken] = useState("");
 
   const navigate = useNavigate();
 
@@ -71,13 +73,35 @@ const ShopContextProvider = ({ children }) => {
           if (cartitems[items][item] > 0) {
             totalAmount += itemInfo.price * cartitems[items][item];
           }
-        } catch (error) {}
+        } catch (error) {
+          console.log(error.message);
+        }
       }
     }
     return totalAmount;
   };
 
-  
+  const getProductsData = async () => {
+    try {
+      const response = await axios.get(backendUrl + "/api/product/list");
+      if (response.data.success) {
+        setProducts(response.data.products);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message);
+    }
+  };
+  useEffect(() => {
+    getProductsData();
+  }, []);
+  useEffect(() => {
+    if (!token && localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
 
   const value = {
     products,
@@ -88,11 +112,15 @@ const ShopContextProvider = ({ children }) => {
     showsearch,
     setShowsearch,
     addToCart,
+    setcartitems,
     cartitems,
     getcartCount,
     updateQuantity,
     getCartAmount,
     navigate,
+    backendUrl,
+    setToken,
+    token,
   };
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
 };
