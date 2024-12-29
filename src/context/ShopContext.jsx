@@ -35,6 +35,23 @@ const ShopContextProvider = ({ children }) => {
     }
     setcartitems(cartData);
 
+    // also upadate in the database after updating in the frontend also update in frontend
+
+    if (token) {
+      try {
+        await axios.post(
+          backendUrl + "/api/cart/add",
+          { itemId, size },
+          {
+            headers: { token },
+          }
+        );
+      } catch (error) {
+        console.log(error.message);
+        toast.error(error.message);
+      }
+    }
+
     // ex:-  :{
     //   item1: { M: 2 }
     // }
@@ -60,6 +77,21 @@ const ShopContextProvider = ({ children }) => {
     let cartData = structuredClone(cartitems);
     cartData[itemId][size] = quantity;
     setcartitems(cartData);
+
+    // for backend
+
+    if (token) {
+      try {
+        await axios.post(
+          backendUrl + "/api/cart/update",
+          { itemId, size, quantity },
+          { headers: { token } }
+        );
+      } catch (error) {
+        console.log(error.message);
+        toast.error(error.message);
+      }
+    }
   };
 
   //cartamount
@@ -94,12 +126,33 @@ const ShopContextProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
+
+  //user cart
+  const getUserCart = async (token) => {
+    try {
+      const response = await axios.post(
+        backendUrl + "/api/cart/get",
+        {},
+        { headers: { token } }
+      );
+      if (response.data.success) {
+        setcartitems(response.data.cartData);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message);
+    }
+  };
+
   useEffect(() => {
     getProductsData();
   }, []);
+  //important when the website mounts the token will lost but it get from the localStorage
   useEffect(() => {
     if (!token && localStorage.getItem("token")) {
+      //token will be lost when the  website mounts then it gets from the localstorage
       setToken(localStorage.getItem("token"));
+      getUserCart(localStorage.getItem("token"));
     }
   }, []);
 
