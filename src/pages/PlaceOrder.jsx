@@ -6,9 +6,45 @@ import { ShopContext } from "../context/ShopContext";
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
-  const { navigate } = useContext(ShopContext);
+
+  const {
+    navigate,
+    backendUrl,
+    setToken,
+    token,
+    getCartAmount,
+    products,
+    currency,
+    delivery_fee,
+  } = useContext(ShopContext);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    street: "",
+    city: "",
+    state: "",
+    zipcode: "",
+    country: "",
+    phone: "",
+  });
+
+  const onChangeHandler = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...formData, [name]: value }));
+  };
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
+    try {
+      let orderItems = [];
+    } catch (error) {}
+  };
+
   return (
-    <div className=" flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t ">
+    <form
+      onSubmit={onSubmitHandler}
+      className=" flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t "
+    >
       {/* left side */}
       <div className=" flex flex-col gap-4 w-full sm:max-w-[480px]">
         <div className=" text-xl sm:text-2xl my-3">
@@ -20,22 +56,38 @@ const PlaceOrder = () => {
             className=" border border-gray-300 rounded py-1.5 px-3.5 w-full"
             type="text"
             placeholder="First name"
+            onChange={onChangeHandler}
+            name="firstName"
+            value={formData.firstName}
+            required
           />
           <input
             className=" border border-gray-300 rounded py-1.5 px-3.5 w-full"
             type="text"
             placeholder="Last name"
+            onChange={onChangeHandler}
+            name="lastName"
+            value={formData.lastName}
+            required
           />
         </div>
         <input
           className=" border border-gray-300 rounded py-1.5 px-3.5 w-full"
           type="email"
           placeholder="Email address"
+          onChange={onChangeHandler}
+          name="email"
+          value={formData.email}
+          required
         />
         <input
           className=" border border-gray-300 rounded py-1.5 px-3.5 w-full"
           type="text"
           placeholder="Street"
+          onChange={onChangeHandler}
+          name="street"
+          value={formData.street}
+          required
         />
         {/* city and state */}
         <div className=" flex gap-3">
@@ -43,11 +95,19 @@ const PlaceOrder = () => {
             className=" border border-gray-300 rounded py-1.5 px-3.5 w-full"
             type="text"
             placeholder="City"
+            onChange={onChangeHandler}
+            name="city"
+            value={formData.city}
+            required
           />
           <input
             className=" border border-gray-300 rounded py-1.5 px-3.5 w-full"
             type="text"
             placeholder="State"
+            onChange={onChangeHandler}
+            name="state"
+            value={formData.state}
+            required
           />
         </div>
         {/* zip code and country */}
@@ -56,17 +116,29 @@ const PlaceOrder = () => {
             className=" border border-gray-300 rounded py-1.5 px-3.5 w-full"
             type="number"
             placeholder="Zipcode"
+            onChange={onChangeHandler}
+            name="zipcode"
+            value={formData.zipcode}
+            required
           />
           <input
             className=" border border-gray-300 rounded py-1.5 px-3.5 w-full"
             type="text"
             placeholder="Country"
+            onChange={onChangeHandler}
+            name="country"
+            value={formData.country}
+            required
           />
         </div>
         <input
           className=" border border-gray-300 rounded py-1.5 px-3.5 w-full"
           type="number"
           placeholder="Phone"
+          onChange={onChangeHandler}
+          name="phone"
+          value={formData.phone}
+          required
         />
       </div>
       {/* right side */}
@@ -117,13 +189,16 @@ const PlaceOrder = () => {
           </div>
           {/* place order button */}
           <div className=" w-full text-end mt-8">
-            <button onClick={()=> navigate("/orders")} className=" bg-black text-white px-16 py-3 text-sm  hover:bg-gray-800">
+            <button
+              className=" bg-black text-white px-16 py-3 text-sm  hover:bg-gray-800"
+              type="submit"
+            >
               PLACE ORDER
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
