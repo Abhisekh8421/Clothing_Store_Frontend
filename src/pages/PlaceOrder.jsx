@@ -3,6 +3,8 @@ import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
 import { assets } from "../assets/frontend_assets/assets";
 import { ShopContext } from "../context/ShopContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
@@ -16,6 +18,8 @@ const PlaceOrder = () => {
     products,
     currency,
     delivery_fee,
+    cartitems,
+    setcartitems,
   } = useContext(ShopContext);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -37,7 +41,47 @@ const PlaceOrder = () => {
     event.preventDefault();
     try {
       let orderItems = [];
-    } catch (error) {}
+      for (const items in cartitems) {
+        for (const item in cartitems[items]) {
+          if (cartitems[items][item] > 0) {
+            const itemInfo = structuredClone(
+              products.find((product) => product._id === items)
+            );
+            if (itemInfo) {
+              itemInfo.size = item;
+              itemInfo.quantity = cartitems[items][item]; //just add the existing schema with added of size and quantity what user selects
+              orderItems.push(itemInfo);
+            }
+          }
+        }
+      }
+      // console.log(orderItems);
+      let orderData = {
+        address: formData,
+        items: orderItems,
+        amount: getCartAmount() + delivery_fee,
+      };
+      switch (method) {
+        case "cod":
+          const response = await axios.post(
+            backendUrl + "/api/order/place",
+            orderData,
+            { headers: { token } }
+          );
+          if (response.data.success) {
+            setcartitems({});
+            navigate("/orders");
+          } else {
+            toast.error(response.data.message);
+          }
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message);
+    }
   };
 
   return (
