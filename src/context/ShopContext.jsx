@@ -152,7 +152,7 @@ const ShopContextProvider = ({ children }) => {
     if (!token && localStorage.getItem("token")) {
       //token will be lost when the  website mounts then it gets from the localstorage
       setToken(localStorage.getItem("token"));
-      getUserCart(localStorage.getItem("token"));
+      getUserCart(localStorage.getItem("token"));//getUserCart is a function 
     }
   }, []);
 
@@ -174,7 +174,7 @@ const ShopContextProvider = ({ children }) => {
     backendUrl,
     setToken,
     token,
-    setcartitems
+    
   };
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
 };
